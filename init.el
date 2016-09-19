@@ -41,7 +41,9 @@
                       magit
                       darktooth-theme
                       writeroom-mode
-                      zenburn-theme))
+                      zenburn-theme
+                      focus-autosave-mode
+                      ))
 
 (dolist (p my-packages)
   (unless (package-installed-p p)
@@ -69,6 +71,9 @@
 (global-evil-surround-mode 1)
 
 ;; TODO: Bind M-. and M-, for Cider Mode
+
+;; Focus autosave mode
+(focus-autosave-mode)
 
 ;; Fast switching between buffers
 (define-key evil-normal-state-map (kbd "{") 'evil-next-buffer)
@@ -253,7 +258,11 @@
 ;;; orgmode
 (require 'org)
 
-; langauges for org-babel support
+;; load habits
+(add-to-list 'org-modules 'org-habit)
+(setq org-habit-graph-column 80)
+
+;; langauges for org-babel support
 (org-babel-do-load-languages
  'org-babel-load-languages
  '(
@@ -273,25 +282,156 @@
 (load "~/.emacs.d/org-pomodoro")
 
 (setq org-directory "~/switchdrive/org/")
+(setq org-agenda-files '("~/switchdrive/org"))
+
+;; (setq org-agenda-files (list (concat org-directory "work.org")
+;;                              (concat org-directory "zhaw.org")
+;;                              (concat org-directory "home.org")
+;;                              (concat org-directory "refile.org")))
 
 ;; Set org-capture inbox
-(setq org-default-notes-file (concat org-directory "inbox.org"))
-(define-key global-map "\C-cc" 'org-capture)
+(setq org-default-notes-file (concat org-directory "refile.org"))
 
-(setq org-agenda-files (list (concat org-directory "things.org")
-                             (concat org-directory "inbox.org")
-                             (concat org-directory "reference.org")))
+(define-key global-map "\C-cc" 'org-capture)
+(define-key global-map "\C-ca" 'org-agenda)
+
+
+;; Tags with fast selection keys
+(setq org-tag-alist (quote ((:startgroup)
+                            ("@errand" . ?e)
+                            ("@office" . ?o)
+                            ("@home" . ?H)
+                            (:endgroup)
+                            ("WAITING" . ?w)
+                            ("HOLD" . ?h)
+                            ("PERSONAL" . ?P)
+                            ("WORK" . ?W)
+                            ("HOME" . ?F)
+                            ("SWITCH" . ?S)
+                            ("ZHAW" . ?Z)
+                            ("NOTE" . ?n)
+                            ("CANCELLED" . ?c)
+                            ("FLAGGED" . ??))))
+
+;; Allow setting single tags without the menu
+(setq org-fast-tag-selection-single-key (quote expert))
+
+;; For tag searches ignore tasks with scheduled and deadline dates
+(setq org-agenda-tags-todo-honor-ignore-options t)
+
+;; Do not dim blocked tasks
+(setq org-agenda-dim-blocked-tasks nil)
+
+;; Compact the block agenda view
+(setq org-agenda-compact-blocks t)
+
+
+(setq org-agenda-custom-commands
+      (quote (("n" "Next tasks" todo "NEXT"
+               ((org-agenda-overriding-header "Next")
+                (org-tags-match-list-sublevels t)))
+              ("A" "Agenda JCF"
+               ((agenda "" ((org-agenda-ndays 2)))
+                (todo "NEXT"
+                      ((org-agenda-overriding-header "Next up")
+                       (org-tags-match-list-sublevels t)))
+                (todo "WAITING"
+                      ((org-agenda-overriding-header "Waiting")
+                       (org-tags-match-list-subleveles t)))
+                ;; (tags-todo "-CANCELLED/!"
+                ;;            ((org-agenda-overriding-header "Stuck Projects")
+                ;;             (org-agenda-skip-function 'bh/skip-non-stuck-projects)
+                ;;             (org-agenda-sorting-strategy '(category-keep))))
+                (tags-todo "STYLE-\"habit\""
+                           ((org-agenda-overriding-header "Habits")
+                            (org-agenda-sorting-strategy
+                             '(todo-stae-down effort-up category-keep))
+                            ))
+                ))
+
+              ("N" "Notes" tags "NOTE"
+               ((org-agenda-overriding-header "Notes")
+                (org-tags-match-list-sublevels t)))
+              ("h" "Habits" tags-todo "STYLE=\"habit\""
+               ((org-agenda-overriding-header "Habits")
+                (org-agenda-sorting-strategy
+                 '(todo-state-down effort-up category-keep))))
+              )))
+
+
+(setq org-todo-keywords
+      (quote ((sequence "TODO(t)" "NEXT(n)" "|" "DONE(d)")
+              (sequence "WAITING(w@/!)" "HOLD(h@/!)" "|" "CANCELLED(c@/!)" "PHONE" "MEETING"))))
+(setq org-todo-keyword-faces
+      (quote (("TODO" :foreground "red" :weight bold)
+              ("NEXT" :foreground "blue" :weight bold)
+              ("DONE" :foreground "forest green" :weight bold)
+              ("WAITING" :foreground "orange" :weight bold)
+              ("HOLD" :foreground "magenta" :weight bold)
+              ("CANCELLED" :foreground "forest green" :weight bold)
+              ("MEETING" :foreground "forest green" :weight bold)
+              ("PHONE" :foreground "forest green" :weight bold))))
+(setq org-todo-state-tags-triggers
+      (quote (("CANCELLED" ("CANCELLED" . t))
+              ("WAITING" ("WAITING" . t))
+              ("HOLD" ("WAITING") ("HOLD" . t))
+              (done ("WAITING") ("HOLD"))
+              ("TODO" ("WAITING") ("CANCELLED") ("HOLD"))
+              ("NEXT" ("WAITING") ("CANCELLED") ("HOLD"))
+              ("DONE" ("WAITING") ("CANCELLED") ("HOLD")))))
+
+
+(org-agenda nil "A")
 
 (setq org-capture-templates
-      '(("t" "Todo" entry (file+headline (concat org-directory "inbox.org") "Tasks")
-         "* TODO %?\n  %U\n  %i\n  %a")
-        ("s" "Code Snippet" entry
-         (file (concat org-directory "snippets.org"))
-         ;; Prompt for tag and language
-         "* %?\t%^g\n#+BEGIN_SRC %^{language}\n%i\n#+END_SRC")
-        ("m" "Media" entry
-         (file+datetree (concat org-directory "media.org"))
-         "* %?\nURL: \nEntered on %U\n")))
+      '(("t" "todo" entry
+      (file "~/org/refile.org")
+      "* TODO %?
+%U
+%a
+" :clock-in t :clock-resume t)
+     ("r" "respond" entry
+      (file (concat org-directory "refile.org"))
+      "* NEXT Respond to %:from on %:subject
+SCHEDULED: %t
+%U
+%a
+" :clock-in t :clock-resume t :immediate-finish t)
+     ("n" "note" entry
+      (file (concat org-directory "notes.org"))
+      "* %? :NOTE:
+%U
+%a
+" :clock-in t :clock-resume t)
+     ("j" "Journal" entry
+      (file+datetree "~/switchdrive/org/diary.org")
+      "* %?
+%U
+" :clock-in t :clock-resume t)
+     ("w" "org-protocol" entry
+      (file (concat org-directory "refile.org"))
+      "* TODO Review %c
+%U
+" :immediate-finish t)
+     ("m" "Meeting" entry
+      (file (concat org-directory "refile.org"))
+      "* MEETING with %? :MEETING:
+%U" :clock-in t :clock-resume t)
+     ("p" "Phone call" entry
+      (file (concat org-directory "refile.org"))
+      "* PHONE %? :PHONE:
+%U" :clock-in t :clock-resume t)
+     ("h" "Habit" entry
+      (file (concat org-directory "refile.org"))
+      "* NEXT %?
+%U
+%a
+SCHEDULED: %(format-time-string \"%<<%Y-%m-%d %a .+1d/3d>>\")
+:PROPERTIES:
+:STYLE: habit
+:REPEAT_TO_STATE: NEXT
+:END:
+")))
 
 (defun things ()
   "Open main 'org-mode' file and start 'org-agenda' for today."
@@ -325,7 +465,7 @@
   (menu-bar-mode -1))
 
 ;;; Mu4e
-(load "~/.emacs.d/mu4e-config")
+;; (load "~/.emacs.d/mu4e-config")
 
 ;;; Magit
 (global-set-key (kbd "C-x g") 'magit-status)
