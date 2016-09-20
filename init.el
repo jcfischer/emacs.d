@@ -468,7 +468,7 @@ SCHEDULED: %(format-time-string \"%<<%Y-%m-%d %a .+1d/3d>>\")
   (menu-bar-mode -1))
 
 ;;; Mu4e
-;; (load "~/.emacs.d/mu4e-config")
+(load "~/.emacs.d/mu4e-config")
 
 ;;; Magit
 (global-set-key (kbd "C-x g") 'magit-status)
