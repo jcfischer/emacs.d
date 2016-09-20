@@ -255,6 +255,9 @@
 (require 'yaml-mode)
 (add-to-list 'auto-mode-alist '("\\.yml$" . yaml-mode))
 
+    ;;
+    ;; Org Mode as described by http://doc.norang.ca/org-mode.html
+    ;;
 ;;; orgmode
 (require 'org)
 
@@ -325,7 +328,7 @@
 ;; Compact the block agenda view
 (setq org-agenda-compact-blocks t)
 
-
+(setq org-agenda-skip-scheduled-if-done t)
 (setq org-agenda-custom-commands
       (quote (("n" "Next tasks" todo "NEXT"
                ((org-agenda-overriding-header "Next")
@@ -342,10 +345,10 @@
                 ;;            ((org-agenda-overriding-header "Stuck Projects")
                 ;;             (org-agenda-skip-function 'bh/skip-non-stuck-projects)
                 ;;             (org-agenda-sorting-strategy '(category-keep))))
-                (tags-todo "STYLE-\"habit\""
+                (tags-todo "STYLE=\"habit\""
                            ((org-agenda-overriding-header "Habits")
                             (org-agenda-sorting-strategy
-                             '(todo-stae-down effort-up category-keep))
+                             '(todo-state-down effort-up category-keep))
                             ))
                 ))
 
