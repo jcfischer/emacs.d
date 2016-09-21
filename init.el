@@ -56,6 +56,12 @@
 ;; Enable "M-x" in evil mode
 (global-set-key (kbd "M-x") 'execute-extended-command)
 
+;; set command key as meta key
+(setq mac-command-key-is-meta t)
+(setq mac-option-key-is-meta t)
+(setq mac-right-option-modifier nil)
+
+
 ;; Leader Mode Config
 (global-evil-leader-mode)
 (evil-leader/set-leader ",")
