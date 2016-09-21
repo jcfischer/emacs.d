@@ -15,6 +15,9 @@
 
 
 (global-set-key (kbd "C-c u") 'mu4e)
+(setq mu4e-get-mail-command "offlineimap"
+      mu4e-update-interval (* 10 60)
+      mu4e-headers-auto-update t)
 
 ;; Default account on startup
 (setq user-full-name  "Jens-Christian Fischer"
@@ -25,13 +28,18 @@
 (setq smtpmail-debug-info t
       message-kill-buffer-on-exit t
       mu4e-get-mail-command "offlineimap"
-      mu4e-attachment-dir "~/switchdrive/org/files/inbox")
+      mu4e-attachment-dir "~/Desktop")
 
 (setq mu4e-maildir "~/Maildir/")
 
+;; Date - Time formating
+(setq mu4e-date-format-long "%Y-%m-%d %H:%M:%S")
+(setq mu4e-headers-date-format "%d.%m.%y")
+(setq mu4e-headers-time-format "%H:%M:%S")
+
 ;; HTML Mails
 (require 'mu4e-contrib)
-;; (setq mu4e-html2text-command 'mu4e-shr2text)
+(setq mu4e-html2text-command 'mu4e-shr2text)
 (add-to-list 'mu4e-view-actions '("ViewInBrowser" . mu4e-action-view-in-browser) t)
 
 ;; html handling
@@ -158,9 +166,10 @@
            :enter-func (lambda () (mu4e-message "Switch to the Invisible context"))
            ;; leave-func not defined
            :match-func (lambda (msg)
-                         (when msg
-                           (mu4e-message-contact-field-matches msg
-                                                               :to "jens-christian@invisible.ch")))
+                         (when msg (string-match "/invisible/.*" (mu4e-message-field msg :maildir))))
+                         ;; (when msg
+                         ;;   (mu4e-message-contact-field-matches msg
+                         ;;                                       :to "jens-christian@invisible.ch")))
            :vars '(  ( user-mail-address	     . "jens-christian@invisible.ch"  )
                      ( user-full-name	    . "Jens-Christian Fischer" )
                      ( mu4e-sent-folder . "/invisible/INBOX.Sent")
@@ -185,9 +194,10 @@
            :enter-func (lambda () (mu4e-message "Switch to the SWITCH context"))
            ;; leave-func not defined
            :match-func (lambda (msg)
-                         (when msg
-                           (mu4e-message-contact-field-matches msg
-                                                               :to "jens-christian.fischer@switch.ch")))
+                        (when msg (string-match "/switch/.*" (mu4e-message-field msg :maildir))))
+                         ;; (when msg
+                         ;;   (mu4e-message-contact-field-matches msg
+                         ;;                                       :to "jens-christian.fischer@switch.ch")))
            :vars '(  ( user-mail-address	     . "jens-christian.fischer@switch.ch"  )
                      ( user-full-name	    . "Jens-Christian Fischer" )
                      ( mu4e-sent-folder . "/switch/INBOX.Sent")
@@ -244,11 +254,11 @@
 
   ;; start with the first (default) context;
   ;; default is to ask-if-none (ask when there's no context yet, and none match)
-  (setq mu4e-context-policy 'pick-first)
+  (setq mu4e-context-policy 'ask)
 
   ;; compose with the current context is no context matches;
   ;; default is to ask
-  (setq mu4e-compose-context-policy nil)
+  (setq mu4e-compose-context-policy 'ask)
 
 
 ;; fancy
