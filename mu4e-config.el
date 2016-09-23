@@ -16,7 +16,7 @@
 
 (global-set-key (kbd "C-c u") 'mu4e)
 (setq mu4e-get-mail-command "offlineimap"
-      mu4e-update-interval (* 10 60)
+      mu4e-update-interval (* 30 60)
       mu4e-headers-auto-update t)
 
 ;; Default account on startup
