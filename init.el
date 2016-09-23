@@ -56,10 +56,19 @@
 ;; Enable "M-x" in evil mode
 (global-set-key (kbd "M-x") 'execute-extended-command)
 
+
+
 ;; set command key as meta key
 (setq mac-command-key-is-meta t)
 (setq mac-option-key-is-meta t)
 (setq mac-right-option-modifier nil)
+
+;; bind the ¨ to left option key
+(global-unset-key (kbd "M-u"))
+(define-key key-translation-map [dead-diaeresis] (lookup-key key-translation-map "\C-x8\""))
+(define-key isearch-mode-map [dead-diaeresis] nil)
+(global-set-key (kbd "M-u") (lookup-key key-translation-map "\C-x8\""))
+
 
 
 ;; Leader Mode Config
