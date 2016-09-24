@@ -116,18 +116,12 @@
                 (todo "NEXT"
                       ((org-agenda-overriding-header "Next up")
                        (org-tags-match-list-sublevels t)))
+                (todo "PHONE"
+                      ((org-agenda-overriding-header "Phone")
+                       (org-tags-match-list-sublevels t)))
                 (todo "WAITING"
                       ((org-agenda-overriding-header "Waiting")
                        (org-tags-match-list-subleveles t)))
-                ;; (tags-todo "-CANCELLED/!"
-                ;;            ((org-agenda-overriding-header "Stuck Projects")
-                ;;             (org-agenda-skip-function 'bh/skip-non-stuck-projects)
-                ;;             (org-agenda-sorting-strategy '(category-keep))))
-                (tags-todo "STYLE=\"habit\""
-                           ((org-agenda-overriding-header "Habits")
-                            (org-agenda-sorting-strategy
-                             '(todo-state-down effort-up category-keep))
-                            ))
                 ))
 
               ("N" "Notes" tags "NOTE"
