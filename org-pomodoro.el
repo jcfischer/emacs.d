@@ -19,7 +19,7 @@
       (shell-command "say 'Time to take a break'")
     nil)
   (message-box "Time to take a break"))
-  
+
 
 (defun pomodoro-break ()
   "."
@@ -40,7 +40,9 @@
 
 ;; Modify the org-clock-in so that a pomodoro timer is started except
 ;; if a timer is already started already.
-(add-hook 'org-clock-in-hook (lambda ()
-                               (remove-hook 'org-timer-done-hook 'set-break-timer)
-                               (if (not org-timer-current-timer)
-                                   (pomodoro-start))))
+;; (add-hook 'org-clock-in-hook (lambda ()
+;;                                (remove-hook 'org-timer-done-hook 'set-break-timer)
+;;                                (if (not org-timer-current-timer)
+;;                                    (pomodoro-start))))
+
+;;; org-pomodoro.el ends here
