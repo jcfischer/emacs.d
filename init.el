@@ -43,6 +43,7 @@
                       writeroom-mode
                       zenburn-theme
                       focus-autosave-mode
+                      org-bullets
                       ))
 
 (dolist (p my-packages)
@@ -127,7 +128,7 @@
 (defun standard-mode ()
   "Default theme and font size.  Pendant: (presentation-mode)."
   (interactive)
-  (set-face-attribute 'default nil :height 110)
+  (set-face-attribute 'default nil :height 130)
   ;; Themes
   (set-frame-parameter nil 'background-mode 'dark)
   ;; Dark, High Contrast
@@ -142,7 +143,7 @@
   "Presentation friendly theme and font size.  Pendant: (standard-mode)."
   (interactive)
   (load-theme 'leuven t)
-  (set-face-attribute 'default nil :height 140))
+  (set-face-attribute 'default nil :height 180))
 
 (standard-mode)
 
