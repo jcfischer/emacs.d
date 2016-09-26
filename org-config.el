@@ -9,12 +9,16 @@
 (add-to-list 'org-modules 'org-habit)
 (setq org-habit-graph-column 80)
 
+; (require 'org-bullets)
+(add-hook 'org-mode-hook (lambda () (org-bullets-mode 1)))
+
 ;; langauges for org-babel support
 (org-babel-do-load-languages
  'org-babel-load-languages
  '(
    (sh . t)
    (ruby . t)
+   (js . t)
    ))
 
 (add-hook 'org-mode-hook 'auto-fill-mode)
