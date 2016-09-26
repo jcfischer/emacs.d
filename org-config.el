@@ -5,14 +5,39 @@
 ;;; orgmode
 (require 'org)
 
-;; load habits
-(add-to-list 'org-modules 'org-habit)
-(setq org-habit-graph-column 80)
+
+;; display settings
 
 ; (require 'org-bullets)
 (add-hook 'org-mode-hook (lambda () (org-bullets-mode 1)))
 
-;; langauges for org-babel support
+; nice downward arrow
+(setq org-ellipsis "⤵")
+
+; Use syntax highlighting in source blocks while editing.
+
+(setq org-src-fontify-natively t)
+
+;Make TAB act as if it were issued in a buffer of the language’s major mode.
+
+(setq org-src-tab-acts-natively t)
+; When editing a code snippet, use the current window rather than popping open a new one (which shows the same information).
+
+(setq org-src-window-setup 'current-window)
+
+;; load habits
+(add-to-list 'org-modules 'org-habit)
+(setq org-habit-graph-column 80)
+
+;; export settings
+
+(require 'ox-md)
+(require 'ox-beamer)
+
+;;; Babel
+
+
+;; languages for org-babel support
 (org-babel-do-load-languages
  'org-babel-load-languages
  '(
@@ -20,6 +45,9 @@
    (ruby . t)
    (js . t)
    ))
+
+; Don’t ask before evaluating code blocks.
+(setq org-confirm-babel-evaluate nil)
 
 (add-hook 'org-mode-hook 'auto-fill-mode)
 (add-hook 'org-mode-hook 'flyspell-mode)
@@ -161,6 +189,10 @@
 
 
 (org-agenda nil "A")
+
+; When I’m starting an org capture template I’d like to begin in insert mode. I’m opening it up in order to start typing something, so this skips a step.
+
+(add-hook 'org-capture-mode-hook 'evil-insert-state)
 
 (setq org-capture-templates
       '(("t" "todo" entry

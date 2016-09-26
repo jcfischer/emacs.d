@@ -44,6 +44,7 @@
                       zenburn-theme
                       focus-autosave-mode
                       org-bullets
+                      engine-mode
                       ))
 
 (dolist (p my-packages)
@@ -344,6 +345,87 @@
   (let ((word (read-string "Word: " (word-at-point))))
     (async-shell-command (concat "dict" " " word)))
   (other-window 1))
+
+
+;;; Dired
+(require 'dired-x)
+; (require 'dired+)
+; (require 'dired-open)
+
+; These are the switches that get passed to ls when dired gets a list of files.
+(setq-default dired-listing-switches "-lhvA")
+
+; Kill buffers of files/directories that are deleted in dired.
+(setq dired-clean-up-buffers-too t)
+
+; Always copy directories recursively instead of asking every time.
+(setq dired-recursive-copies 'always)
+
+; Ask before recursively deleting a directory, though.
+(setq dired-recursive-deletes 'top)
+
+;;; Configure yasnippet
+
+; I keep my snippets in ~/.emacs/snippets/text-mode, and I always want yasnippet enabled.
+
+(setq yas-snippet-dirs '("~/.emacs.d/snippets/text-mode"))
+(yas-global-mode 1)
+; I don’t want ido to automatically indent the snippets it inserts. Sometimes this looks pretty bad (when indenting org-mode, for example, or trying to guess at the correct indentation for Python).
+
+(setq yas/indent-line nil)
+
+
+;;; Abbrev mode
+
+; Email addresses
+(define-abbrev-table 'global-abbrev-table
+  '(("jcf" "Jens-Christian Fischer")
+    ("esw" "jens-christian.fischer@switch.ch")
+    ("jai" "jens-christian@invisible.ch")
+    ))
+
+; always enable abbrev mode
+(setq-default abbrev-mode t)
+
+
+;;; engine mode
+;; use C-c / to start search
+(require 'engine-mode)
+
+(setq engine/browser-function 'eww-browse-url)
+
+(defengine duckduckgo
+  "https://duckduckgo.com/html/?q=%s"
+  :keybinding "d")
+
+(defengine github
+  "https://github.com/search?ref=simplesearch&q=%s"
+  :keybinding "g")
+
+(defengine google
+  "http://www.google.com/search?ie=utf-8&oe=utf-8&q=%s")
+
+(defengine rfcs
+  "http://pretty-rfc.herokuapp.com/search?q=%s")
+
+(defengine stack-overflow
+  "https://stackoverflow.com/search?q=%s"
+  :keybinding "s")
+
+(defengine wikipedia
+  "http://www.wikipedia.org/search-redirect.php?language=en&go=Go&search=%s"
+  :keybinding "w")
+
+(defengine wiktionary
+  "https://www.wikipedia.org/search-redirect.php?family=wiktionary&language=en&go=Go&search=%s")
+
+(engine-mode t)
+
+
+;;; Full Screen
+; start Emacs in Fullsceen mode
+(set-frame-parameter nil 'fullscreen 'fullboth)
+
 
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
