@@ -187,6 +187,8 @@
 (setq inhibit-splash-screen t)
 (setq inhibit-startup-message t)
 
+;; display time in mode line
+(setq display-time-24hr-format t)
 (display-time-mode t)
 
 
