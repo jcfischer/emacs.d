@@ -15,6 +15,7 @@
                       flycheck
                       auto-complete
                       web-mode
+                      emmet-mode
                       clojure-mode
                       clj-refactor
                       cider
@@ -45,6 +46,7 @@
                       focus-autosave-mode
                       org-bullets
                       engine-mode
+                      nodejs-repl
                       ))
 
 (dolist (p my-packages)
@@ -402,10 +404,11 @@
 
 (defengine github
   "https://github.com/search?ref=simplesearch&q=%s"
-  :keybinding "g")
+  :keybinding "h")
 
 (defengine google
-  "http://www.google.com/search?ie=utf-8&oe=utf-8&q=%s")
+  "http://www.google.com/search?ie=utf-8&oe=utf-8&q=%s"
+  :keybinding "g")
 
 (defengine rfcs
   "http://pretty-rfc.herokuapp.com/search?q=%s")
@@ -423,12 +426,19 @@
 
 (engine-mode t)
 
+;;; emmet-mode
+
+(require 'emmet-mode)
+(add-hook 'sgml-mode-hook 'emmet-mode) ;; Auto-start on any markup modes
+(add-hook 'css-mode-hook  'emmet-mode) ;; enable Emmet's css abbreviation.
 
 ;;; Full Screen
 ; start Emacs in Fullsceen mode
 (set-frame-parameter nil 'fullscreen 'fullboth)
 
+;;; nodejs-repl
 
+(require 'nodejs-repl)
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.
