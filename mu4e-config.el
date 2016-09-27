@@ -19,6 +19,13 @@
       mu4e-update-interval (* 30 60)
       mu4e-headers-auto-update t)
 
+
+;; don't reply to myself
+
+(setq mu4e-compose-dont-reply-to-self t)
+(add-to-list 'mu4e-user-mail-address-list "jens-christian.fischer@switch.ch")
+(add-to-list 'mu4e-user-mail-address-list "jens-christian@invisible.ch")
+(add-to-list 'mu4e-user-mail-address-list "fisj@zhaw.ch")
 ;; Default account on startup
 (setq user-full-name  "Jens-Christian Fischer"
       mu4e-sent-folder "/invisible/INBOX.Sent"
