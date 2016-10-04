@@ -41,12 +41,15 @@
                       restclient
                       magit
                       darktooth-theme
+                      solarized-theme
                       writeroom-mode
                       zenburn-theme
                       focus-autosave-mode
                       org-bullets
                       engine-mode
                       nodejs-repl
+                      powerline
+                      multi-term
                       ))
 
 (dolist (p my-packages)
@@ -114,6 +117,7 @@
 ;; Enable Projectile globally
 (projectile-global-mode)
 
+
 ;; Configure auto-complete
 (ac-config-default)
 
@@ -145,8 +149,9 @@
 (defun presentation-mode ()
   "Presentation friendly theme and font size.  Pendant: (standard-mode)."
   (interactive)
-  (load-theme 'leuven t)
-  (set-face-attribute 'default nil :height 180))
+  ; (load-theme 'leuven t)
+  (load-theme 'solarized-light)
+  (set-face-attribute 'default nil :height 230))
 
 (standard-mode)
 
@@ -238,7 +243,7 @@
  '(coffee-tab-width 2)
  '(custom-safe-themes
    (quote
-    ("df3e05e16180d77732ceab47a43f2fcdb099714c1c47e91e8089d2fcf5882ea3" "d09467d742f713443c7699a546c0300db1a75fed347e09e3f178ab2f3aa2c617" "8db4b03b9ae654d4a57804286eb3e332725c84d7cdab38463cb6b97d5762ad26" "85c59044bd46f4a0deedc8315ffe23aa46d2a967a81750360fb8600b53519b8a" default)))
+    ("8aebf25556399b58091e533e455dd50a6a9cba958cc4ebb0aab175863c25b9a4" "d677ef584c6dfc0697901a44b885cc18e206f05114c8a3b7fde674fce6180879" "a8245b7cc985a0610d71f9852e9f2767ad1b852c2bdea6f4aadc12cce9c4d6d0" "0b83fa904446177e433ff3061c65375e1e5f6fa36d169b5adcba46197b74fad0" "df3e05e16180d77732ceab47a43f2fcdb099714c1c47e91e8089d2fcf5882ea3" "d09467d742f713443c7699a546c0300db1a75fed347e09e3f178ab2f3aa2c617" "8db4b03b9ae654d4a57804286eb3e332725c84d7cdab38463cb6b97d5762ad26" "85c59044bd46f4a0deedc8315ffe23aa46d2a967a81750360fb8600b53519b8a" default)))
  '(frame-background-mode (quote dark))
  '(pos-tip-background-color "#36473A")
  '(pos-tip-foreground-color "#FFFFC8")
@@ -372,7 +377,7 @@
 
 ; I keep my snippets in ~/.emacs/snippets/text-mode, and I always want yasnippet enabled.
 
-(setq yas-snippet-dirs '("~/.emacs.d/snippets/text-mode"))
+(setq yas-snippet-dirs '("~/.emacs.d/snippets"))
 (yas-global-mode 1)
 ; I don’t want ido to automatically indent the snippets it inserts. Sometimes this looks pretty bad (when indenting org-mode, for example, or trying to guess at the correct indentation for Python).
 
@@ -427,6 +432,8 @@
 (engine-mode t)
 
 ;;; emmet-mode
+;; use C-j to exapand snippets
+;; cheatsheet: http://docs.emmet.io/cheat-sheet/
 
 (require 'emmet-mode)
 (add-hook 'sgml-mode-hook 'emmet-mode) ;; Auto-start on any markup modes
@@ -445,5 +452,27 @@
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
  )
+
+;;; Encode HTML to HTML entities
+
+(defun encode-html (start end)
+  (interactive "r")
+  (save-excursion
+    (save-restriction
+      (narrow-to-region start end)
+      (goto-char (point-min))
+      (replace-string "&" "&amp;")
+      (goto-char (point-min))
+      (replace-string "<" "&lt;")
+      (goto-char (point-min))
+      (replace-string ">" "&gt;")
+      )))
+
+
+;; load rest of configuration as org file
+
+(org-babel-load-file "~/.emacs.d/configuration.org")
+
+
 
 ;;; init.el ends here

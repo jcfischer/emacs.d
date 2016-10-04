@@ -1,0 +1,151 @@
+#+TITLE: Emacs configuration
+#+AUTHOR: Jens-Christian Fischer
+#+EMAIL: jens-christian@invisible.ch
+
+* Default Settings
+
+** Gargabe Collection
+
+Allow 20MB of memory (instead of 0.76MB) before calling garbage
+collection. This means GC runs less often, which speeds up some
+operations.
+
+#+BEGIN_SRC emacs-lisp
+  (setq gc-cons-threshold 20000000)
+#+END_SRC
+
+** Do not create backup files
+#+BEGIN_SRC emacs-lisp
+  (setq make-backup-files nil)
+#+END_SRC
+
+** Auto-Save in =/tmp=
+
+Store backups and auto-saved files in TEMPORARY-FILE-DIRECTORY (which
+defaults to /tmp on Unix), instead of in the same directory as the
+file.
+
+#+BEGIN_SRC emacs-lisp
+  (setq backup-directory-alist
+        `((".*" . ,temporary-file-directory)))
+  (setq auto-save-file-name-transforms
+        `((".*" ,temporary-file-directory t)))
+#+END_SRC
+
+** Always follow symlinks
+   When opening a file, always follow symlinks.
+
+#+BEGIN_SRC emacs-lisp
+  (setq vc-follow-symlinks t)
+#+END_SRC
+
+** Sentences have one space after a period
+Don't assume that sentences should have two spaces after
+periods.
+
+#+BEGIN_SRC emacs-lisp
+  (setq sentence-end-double-space nil)
+#+END_SRC
+
+** Confirm before closing Emacs
+#+BEGIN_SRC emacs-lisp
+  (setq confirm-kill-emacs 'y-or-n-p)
+#+END_SRC
+
+** Human readable units in =dired-mode=
+
+#+BEGIN_SRC emacs-lisp
+  (setq-default dired-listing-switches "-alh")
+#+END_SRC
+
+** Ask =y/n= instead of =yes/no=
+#+BEGIN_SRC emacs-lisp
+  (fset 'yes-or-no-p 'y-or-n-p)
+#+END_SRC
+** Auto revert files on change
+When something changes a file, automatically refresh the
+buffer containing that file so they can't get out of sync.
+
+#+BEGIN_SRC emacs-lisp
+(global-auto-revert-mode t)
+#+END_SRC
+
+
+* Powerline Mode stuff
+Add the powerline configuration of Aaron Bieber
+(http://aaronbieber.com) taken from
+https://github.com/aaronbieber/dotfiles/blob/master/configs/emacs.d/
+
+
+#+BEGIN_SRC emacs-lisp
+(require 'powerline)
+(powerline-default-theme)
+
+#+END_SRC
+
+
+* Multiterm
+
+Idea and config from https://github.com/rawsyntax/emacs.d
+
+Run `zsh` as the standard multiterm shell
+
+#+BEGIN_SRC emacs-lisp
+(setq multi-term-program "/bin/zsh")
+
+;; thanks https://github.com/redguardtoo/emacs.d/blob/master/init-term-mode.el
+(defadvice term-sentinel (around my-advice-term-sentinel (proc msg))
+  (if (memq (process-status proc) '(signal exit))
+      (let ((buffer (process-buffer proc)))
+        ad-do-it
+        (kill-buffer buffer))
+    ad-do-it))
+(ad-activate 'term-sentinel)
+
+(defadvice term-send-input (around my-advice-term-send-input ())
+  (if (or (string-match "idg restart" (term-get-old-input-default))
+          (string-match "idg start" (term-get-old-input-default)))
+      (compilation-shell-minor-mode -1))
+  ad-do-it
+  )
+
+(ad-activate 'term-send-input)
+
+(defun term-eol-then-ret ()
+  (interactive)
+  (end-of-line)
+  (term-send-input))
+(add-hook 'term-mode-hook
+          (lambda ()
+            (setq yas-dont-activate t)
+            (setq show-trailing-whitespace nil)
+            (setq term-eol-on-send nil)
+            (add-to-list 'term-bind-key-alist '("M-[" . multi-term-prev))
+            (add-to-list 'term-bind-key-alist '("M-]" . multi-term-next))
+            (add-to-list 'term-bind-key-alist '("C-z" . term-send-raw))
+            (add-to-list 'term-unbind-key-list "RET")
+            (add-to-list 'term-bind-key-alist '("RET" . term-eol-then-ret))
+            (setq term-buffer-maximum-size 10000)
+            (define-key term-raw-map (kbd "C-y") 'term-paste)))
+
+
+(defun toggle-shell-visor ()
+  "Brings up a visor like eshell buffer, filling the entire emacs frame"
+  (interactive)
+  (if (string= "term-mode" (eval 'major-mode))
+      (progn
+        (setq eawh-multi-term-buffer (buffer-name))
+        (jump-to-register :pre-shell-visor-window-configuration))
+    (window-configuration-to-register :pre-shell-visor-window-configuration)
+    (call-interactively 'multi-term-next)
+    (delete-other-windows)
+
+    (if (boundp 'eawh-multi-term-buffer)
+        (switch-to-buffer eawh-multi-term-buffer))
+    ))
+
+(global-set-key (kbd "C-c t") 'toggle-shell-visor)
+(global-set-key (kbd "C-c C-S-t") 'multi-term)
+(global-set-key (kbd "C-x m") 'multi-term)
+
+#+END_SRC
