@@ -140,6 +140,9 @@
   (set-frame-parameter nil 'background-mode 'dark)
   ;; Dark, High Contrast
   (load-theme 'wombat)
+  (set-cursor-color 'DarkGoldenRod)
+  (global-hl-line-mode)
+  (set-face-attribute hl-line-face nil :underline nil)
   ;; Dark, Low contrast
   ;; (load-theme 'darktooth)
   ;; Dark, Lowest contrast
