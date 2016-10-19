@@ -69,7 +69,14 @@ buffer containing that file so they can't get out of sync.
 #+BEGIN_SRC emacs-lisp
 (global-auto-revert-mode t)
 #+END_SRC
+** Tramp configuration
+Tramp can be set to use SSH as the default protocol, which makes
+things quite a bit faster.
 
+#+SRCNAME:
+#+BEGIN_SRC elisp
+(setq tramp-default-method "ssh")
+#+END_SRC
 
 * Powerline Mode stuff
 Add the powerline configuration of Aaron Bieber
