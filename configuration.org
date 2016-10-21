@@ -2,6 +2,86 @@
 #+AUTHOR: Jens-Christian Fischer
 #+EMAIL: jens-christian@invisible.ch
 
+* Package Managment
+** Package Manager
+
+Set up the package management stuff first
+
+#+SRCNAME:
+#+BEGIN_SRC emacs-lisp
+;;; Begin dependency management
+(require 'package)
+
+(setq package-archives '(("gnu" . "https://elpa.gnu.org/packages/")
+                         ("marmalade" . "https://marmalade-repo.org/packages/")
+                         ("melpa" . "https://melpa.org/packages/")))
+(package-initialize)
+(package-refresh-contents)
+
+(defvar my-packages '(ag
+                      flycheck
+                      auto-complete
+                      web-mode
+                      emmet-mode
+                      clojure-mode
+                      clj-refactor
+                      cider
+                      exec-path-from-shell
+                      ac-cider
+                      js2-mode
+                      ac-js2
+                      fixme-mode
+                      sass-mode
+                      yaml-mode
+                      tern
+                      tern-auto-complete
+                      coffee-mode
+                      projectile
+                      markdown-mode
+                      enh-ruby-mode
+                      robe
+                      evil
+                      evil-leader
+                      evil-surround
+                      evil-numbers
+                      impatient-mode
+                      restclient
+                      magit
+                      darktooth-theme
+                      solarized-theme
+                      writeroom-mode
+                      zenburn-theme
+                      focus-autosave-mode
+                      org-bullets
+                      engine-mode
+                      nodejs-repl
+                      powerline
+                      multi-term
+                      ))
+
+(dolist (p my-packages)
+  (unless (package-installed-p p)
+    (package-install p)))
+
+
+
+#+END_SRC
+
+** Use-Package
+
+   Using [[https://github.com/jwiegley/use-package][use-package]] to automatically install certain packages, as
+   well as the ease of lazily loading them.
+
+   #+BEGIN_SRC emacs-lisp
+     (unless (package-installed-p 'use-package)
+       (package-refresh-contents)
+       (package-install 'use-package))
+
+     (require 'use-package)
+   #+END_SRC
+
+
+
 * Default Settings
 
 ** Gargabe Collection
@@ -77,8 +157,19 @@ things quite a bit faster.
 #+BEGIN_SRC elisp
 (setq tramp-default-method "ssh")
 #+END_SRC
+** Use visual line wrap mode
 
-* Powerline Mode stuff
+I actually like to have lines visually wrap, and not the hard wrapping
+that Emacs uses otherwise.
+
+#+BEGIN_SRC emacs-lisp
+(setq visual-fill-column 80)
+(add-hook 'text-mode-hook 'turn-on-visual-line-mode)
+#+END_SRC
+
+
+* Windows Configurations
+** Powerline Mode stuff
 Add the powerline configuration of Aaron Bieber
 (http://aaronbieber.com) taken from
 https://github.com/aaronbieber/dotfiles/blob/master/configs/emacs.d/
@@ -91,7 +182,60 @@ https://github.com/aaronbieber/dotfiles/blob/master/configs/emacs.d/
 #+END_SRC
 
 
-* Multiterm
+* Web Development
+
+** HTTP Server
+
+Install the simple httpd-server
+
+#+BEGIN_SRC elisp
+  (use-package simple-httpd
+     :ensure t
+     :config
+       (setq httpd-root "~/work/zhaw"))
+#+END_SRC
+
+** Skewer
+
+  Live coding for HTML/CSS/JavaScript with a [[https://github.com/skeeto/skewer-mode][Skewer server]] running in Emacs.
+
+  #+BEGIN_SRC elisp
+(use-package skewer-mode
+      :ensure t
+      :commands skewer-mode run-skewer
+      :config (skewer-setup)
+        (add-hook 'js2-mode-hook 'skewer-mode)
+        (add-hook 'css-mode-hook 'skewer-css-mode)
+        (add-hook 'html-mode-hook 'skewer-html-mode)
+)
+  #+END_SRC
+
+
+  =M-x run-skewer=  to attach a browser to Emacs
+
+  A REPL into the browser can be created with =M-x skewer-repl=, or
+  =C-c C-z=. This should work like a console within the browser.
+  Messages can be logged to this REPL with skewer.log() (like
+  console.log()).
+
+  Results of expressions evaluated in the REPL are printed more
+  verbosely than in the minibuffer, when possible. This may help in
+  debugging.
+
+
+
+  Useful key-bindings with the =skewer-setup=:
+
+  - =C-x C-e= :: Evaluate the form before the point and display the result in the
+  - =minibuffer. If given a prefix argument, insert the result into the current
+  - =buffer.
+  - =C-M-x= :: Evaluate the top-level form around the point.
+  - =C-c C-k= :: Load the current buffer.
+  - =C-c C-z= :: Select the REPL buffer.
+
+
+* Utilities
+** Multiterm
 
 Idea and config from https://github.com/rawsyntax/emacs.d
 
@@ -156,3 +300,26 @@ Run `zsh` as the standard multiterm shell
 (global-set-key (kbd "C-x m") 'multi-term)
 
 #+END_SRC
+
+* Still need to organize this code
+
+* Other Tricks
+** USE BOOKMARKS TO JUMP TO FILES OR DIRECTORIES
+
+http://pragmaticemacs.com/emacs/use-bookmarks-to-jump-to-files-or-directories/
+
+In Emacs you can bookmark files and directories (and lots of other
+things) so that you can quickly jump to them (similar to a browser’s
+bookmarks).
+
+The basics are easy. Use =C-x r m= to make a bookmark to the file or
+directory you are currently visiting. You’ll be prompted for an
+optional name for your bookmark. For example, I use names starting
+dir- for bookmarks to directories so that they all appear together in
+the bookmark list.
+
+You can use =C-x r b= to go to a bookmark, and you’ll prompted for the
+name of the bookmark. Use =C-x r l= to list all of the bookmarks.
+
+There is a bookmarks+ package which adds extra features to the normal
+bookmarks, but I’ve not found that I need those extras so far.

@@ -2,61 +2,11 @@
 ;;; Commentary:
 ;;; Code:
 
-;;; Begin dependency management
-(require 'package)
+;; load rest of configuration as org file
 
-(setq package-archives '(("gnu" . "https://elpa.gnu.org/packages/")
-                         ("marmalade" . "https://marmalade-repo.org/packages/")
-                         ("melpa" . "https://melpa.org/packages/")))
-(package-initialize)
+(org-babel-load-file "~/.emacs.d/configuration.org")
 
 
-(defvar my-packages '(ag
-                      flycheck
-                      auto-complete
-                      web-mode
-                      emmet-mode
-                      clojure-mode
-                      clj-refactor
-                      cider
-                      exec-path-from-shell
-                      ac-cider
-                      js2-mode
-                      ac-js2
-                      fixme-mode
-                      sass-mode
-                      yaml-mode
-                      tern
-                      tern-auto-complete
-                      coffee-mode
-                      projectile
-                      markdown-mode
-                      enh-ruby-mode
-                      robe
-                      evil
-                      evil-leader
-                      evil-surround
-                      evil-numbers
-                      impatient-mode
-                      restclient
-                      magit
-                      darktooth-theme
-                      solarized-theme
-                      writeroom-mode
-                      zenburn-theme
-                      focus-autosave-mode
-                      org-bullets
-                      engine-mode
-                      nodejs-repl
-                      powerline
-                      multi-term
-                      ))
-
-(dolist (p my-packages)
-  (unless (package-installed-p p)
-    (package-install p)))
-
-;;; End dependency management
 
 ;;; Evil Mode
 (evil-mode t)
@@ -472,9 +422,6 @@
       )))
 
 
-;; load rest of configuration as org file
-
-(org-babel-load-file "~/.emacs.d/configuration.org")
 
 
 
