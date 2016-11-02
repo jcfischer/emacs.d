@@ -1,0 +1,7 @@
+# -*- mode: snippet -*-
+# name: PreJS
+# key: preJS
+# --
+<pre class="syntax javascript">
+$0
+</pre>
