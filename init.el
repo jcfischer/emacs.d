@@ -71,11 +71,6 @@
 ;; Configure auto-complete
 (ac-config-default)
 
-;; ido-mode
-(ido-mode t)
-(ido-everywhere t)
-(setq ido-enable-flex-matching t)
-(global-set-key (kbd "C-x C-b") 'ibuffer)
 
 ; Replace i-search-(forward|backward) with their respective regexp
 ; capable counterparts

@@ -157,6 +157,47 @@ things quite a bit faster.
 #+BEGIN_SRC elisp
 (setq tramp-default-method "ssh")
 #+END_SRC
+** IDO mode
+
+#+SRCNAME:
+#+BEGIN_SRC elisp
+;; ido-mode
+(ido-mode t)
+(ido-everywhere t)
+(setq ido-enable-flex-matching t)
+(global-set-key (kbd "C-x C-b") 'ibuffer)
+#+END_SRC
+
+also enable id-vertical
+https://github.com/creichert/ido-vertical-mode.el
+
+#+BEGIN_SRC elisp
+  (use-package ido-vertical-mode
+    :ensure t
+    :config
+       (ido-vertical-mode 1)
+       (setq ido-vertical-define-keys 'C-n-and-C-p-only)
+
+  )
+#+END_SRC
+
+
+** SMEX configuration
+
+#+BEGIN_SRC emacs-lisp
+(use-package smex
+        :ensure t
+        :config
+  (global-set-key (kbd "M-x") 'smex)
+  (global-set-key (kbd "M-X") 'smex-major-mode-commands)
+  ;; This is your old M-x.
+  (global-set-key (kbd "C-c C-c M-x") 'execute-extended-command)
+)
+#+END_SRC
+
+#+RESULTS:
+: t
+
 ** Use visual line wrap mode
 
 I actually like to have lines visually wrap, and not the hard wrapping
@@ -165,6 +206,7 @@ that Emacs uses otherwise.
 #+BEGIN_SRC emacs-lisp
 (setq visual-fill-column 80)
 (add-hook 'text-mode-hook 'turn-on-visual-line-mode)
+(setq visual-line-fringe-indicators '(left-curly-arrow right-curly-arrow))
 #+END_SRC
 
 
